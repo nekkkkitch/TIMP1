@@ -116,7 +116,7 @@ func (a *App) SaveTable(table [][]string) error {
 		data += fmt.Sprintf("%v %v \"%v\"\n", table[i][0], table[i][1], table[i][2])
 	}
 
-	file, err := os.OpenFile("table.txt", os.O_WRONLY, os.ModeAppend)
+	file, err := os.Create("table.txt")
 	if err != nil {
 		slog.Info("Init: open file error", "err", err)
 		return err
