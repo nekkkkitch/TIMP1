@@ -6,14 +6,18 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"regexp"
 	"strings"
-	"time"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
 }
+
+var rdate *regexp.Regexp
+var rname *regexp.Regexp
+var rtime *regexp.Regexp
 
 // NewApp creates a new App application struct
 func NewApp() *App {
@@ -23,7 +27,11 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
+	rdate, _ = regexp.Compile(`(\d{4})+\.+(\d{2})+\.+(\d{2})`)
+	rtime, _ = regexp.Compile(`(\d{2})+\:+(\d{2})`)
+	rname, _ = regexp.Compile(`\"(([A-z]){1,}\s?)*\"`)
 	a.ctx = ctx
+
 }
 
 type Lesson struct {
@@ -34,43 +42,10 @@ type Lesson struct {
 
 func processInput(input string) (Lesson, error) {
 	lesson := Lesson{}
-	splitted := strings.Split(input, "\"")
-	if len(splitted) != 3 {
-		return Lesson{}, fmt.Errorf("Bad number of quotation marks")
-	}
-
-	lesson.TeacherName = splitted[1]
-
-	timePart := ""
-	if splitted[0] == "" {
-		timePart = splitted[2]
-	} else if splitted[1] == "" {
-		timePart = splitted[0]
-	} else {
-		timePart = strings.Join([]string{splitted[0], splitted[2]}, " ")
-	}
-
-	splittedTime := strings.Split(timePart, " ")
-	for i := range splittedTime {
-		if splittedTime[i] == "" {
-			continue
-		}
-
-		if len([]rune(splittedTime[i])) == 5 {
-			time, err := time.Parse("15:04", splittedTime[i])
-			if err != nil {
-				return Lesson{}, err
-			}
-			lesson.Time = time.Format("15:04")
-		} else {
-			time, err := time.Parse("2006.01.02", splittedTime[i])
-			if err != nil {
-				return Lesson{}, err
-			}
-			lesson.Date = time.Format("2006.01.02")
-		}
-	}
-
+	lesson.Date = string(rdate.Find([]byte(input)))
+	lesson.Time = string(rtime.Find([]byte(input)))
+	lesson.TeacherName = string(rname.Find([]byte(input)))
+	lesson.TeacherName = strings.ReplaceAll(lesson.TeacherName, "\"", "")
 	return lesson, nil
 }
 
