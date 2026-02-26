@@ -6,4 +6,4 @@ export function AddElement(arg1:string):Promise<models.Lesson>;
 
 export function InitTable():Promise<Array<models.Lesson>>;
 
-export function SaveTable(arg1:Array<any>):Promise<void>;
+export function SaveTable(arg1:Array<any>):Promise<Array<Error>>;
