@@ -33,8 +33,11 @@ func TestSaveTable(t *testing.T) {
 	if len(err) == 0 {
 		defer killTable()
 	}
+}
+
+func TestSaveBadTable(t *testing.T) {
 	t.Log("Bad data save test")
-	err = mockTabler.SaveTable(mockBadData)
+	err := mockTabler.SaveTable(mockBadData)
 	if len(err) == 0 {
 		t.Error("No errors")
 	} else {
@@ -49,7 +52,7 @@ func TestInitTable(t *testing.T) {
 		defer killTable()
 	}
 
-	shouldLessons := []models.Lesson{models.Lesson{Date: "2000.10.10", Time: "12:30", TeacherName: "Valeriy Petrovich"}, models.Lesson{Date: "2000.10.11", Time: "12:30", TeacherName: "Valeriy Petrovich"}}
+	shouldLessons := []models.Lesson{{Date: "2000.10.10", Time: "12:30", TeacherName: "Valeriy Petrovich"}, {Date: "2000.10.11", Time: "12:30", TeacherName: "Valeriy Petrovich"}}
 	lessons := mockTabler.InitTable()
 	require.Equal(t, shouldLessons, lessons)
 }
