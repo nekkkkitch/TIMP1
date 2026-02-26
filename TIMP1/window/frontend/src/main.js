@@ -1,13 +1,14 @@
 import './style.css';
 import './app.css';
-import { Init } from "../wailsjs/go/main/App"
-import { AddElement } from "../wailsjs/go/main/App"
-import { SaveTable } from "../wailsjs/go/main/App"
+import { InitTable } from "../wailsjs/go/scripts/App"
+import { AddElement } from "../wailsjs/go/scripts/App"
+import { SaveTable } from "../wailsjs/go/scripts/App"
 
 let table = document.getElementById("result_table");
 let incr = 0;
-function InitTable(){
-    Init().then((result) => {
+
+function Init(){
+    InitTable().then((result) => {
         console.log(result)
         for(const lesson of result){
             addLine(lesson);
@@ -39,20 +40,19 @@ window.addElement = function(){
     console.log(data.value)
     AddElement(data.value).then((result) => {
         addLine(result);
-        data.value = "";
     })
+    data.value = "";
 };
 
 window.saveTable = function(){
     let lessons = []
-    for (var i = 0, row; row = table.rows[i]; i++) {
+    for (var i = 1, row; row = table.rows[i]; i++) {
         let lesson = [row.cells[0].textContent,row.cells[1].textContent,row.cells[2].textContent];
-        lessons[i] = lesson
+        lessons[i-1] = lesson
         console.log(lesson)
         console.log(lessons)
     };
     SaveTable(lessons);
 };
 
-
-InitTable();
+Init();
